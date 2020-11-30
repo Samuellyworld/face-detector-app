@@ -1,4 +1,5 @@
 import React from 'react';
+import './SignIn.css';
 
 class SignIn extends React.Component {
   constructor(props) {
@@ -63,7 +64,7 @@ class SignIn extends React.Component {
                  <div className="">
                   <input
                    onClick={this.onSubmitSignInChange}
-                   className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib"
+                   className="button b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib"
                    type="submit" value="Sign in"
                    />
                  </div>
