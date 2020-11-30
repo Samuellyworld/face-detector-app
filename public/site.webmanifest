@@ -1,19 +1,38 @@
 {
-    "name": "",
-    "short_name": "",
-    "icons": [
-        {
-            "src": "/android-chrome-192x192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "/android-chrome-256x256.png",
-            "sizes": "256x256",
-            "type": "image/png"
-        }
-    ],
-    "theme_color": "#23756f",
-    "background_color": "#23756f",
-    "display": "standalone"
+  "name": "face-detection-app",
+  "short_name": "face-detection-app",
+  "start_url": "./index.html",
+  "display": "standalone",
+   "background_color": "#23756f",
+  "description": "This is used to detect faces",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-256x256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+     "src": "/android-chrome-256x256.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#23756f"
+ 
+    
 }
