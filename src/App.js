@@ -50,7 +50,6 @@ class App extends Component {
     this.state = initialState;
   }
 
-
  loadUser = (data) => {
      this.setState({ user: {
           id : data.id,
@@ -63,7 +62,6 @@ class App extends Component {
  })
 }
  
-
   calculateFaceLocations = (data) => { 
     return data.outputs[0].data.regions.map(face => {
      const clarifaiFace= face.region_info.bounding_box;
