@@ -15,3 +15,6 @@
   left:0;
   z-index:-1;
 }
+input {
+	outline: none;
+}

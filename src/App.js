@@ -1,29 +1,29 @@
-import React, {Component} from 'react';
-import Clarifai from 'clarifai';
+import React, {Component, Suspense} from 'react';
 import Particles from 'react-particles-js';
-import Register from './components/Register/Register';
+// import Register from './components/Register/Register';
 import SignIn from './components/SignIn/SignIn';
-import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary'; 
+// import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary'; 
 import Navigation from './components/Navigation/Navigation';
-import FaceRecognition from './components/FaceRecognition/FaceRecognition';
-import Logo from './components/Logo/Logo';
-import Rank from './components/Rank/Rank';
-import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
+// import FaceRecognition from './components/FaceRecognition/FaceRecognition';
+// import Logo from './components/Logo/Logo';
+// import Rank from './components/Rank/Rank';
+// import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import './App.css';
 
-
- const app = new Clarifai.App({apiKey: '4e2138a283314954a9f2ac4e15c2cfa8'});
-
- 
-
+const Registerlazy = React.lazy(() => import('./components/Register/Register'));
+const Errorlazy = React.lazy(() => import('./components/ErrorBoundary/ErrorBoundary'));
+const Facelazy = React.lazy(() => import('./components/FaceRecognition/FaceRecognition'));
+const Logolazy = React.lazy(() => import('./components/Logo/Logo'));
+const Ranklazy = React.lazy(() => import('./components/Rank/Rank'));
+const Imagelazy = React.lazy(() => import('./components/ImageLinkForm/ImageLinkForm'));
 
 const particlesOptions = {
   particles: {
     number: {
-      value:50,
+      value:70,
       density:{
         enable: true,
-        value_area: 800
+        value_area: 900
       }
     }
   }
@@ -32,7 +32,7 @@ const particlesOptions = {
 const initialState = {
       input: '',
       imageUrl: '',
-      box: {} ,
+      boxes: [],
       route : 'signin',
       isSignedIn : false,
       user: {
@@ -50,7 +50,6 @@ class App extends Component {
     this.state = initialState;
   }
 
-
  loadUser = (data) => {
      this.setState({ user: {
           id : data.id,
@@ -63,10 +62,10 @@ class App extends Component {
  })
 }
  
-
-  calculateFaceLocation = (data) => { 
-    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
-    const image = document.getElementById('inputimage');
+  calculateFaceLocations = (data) => { 
+    return data.outputs[0].data.regions.map(face => {
+     const clarifaiFace= face.region_info.bounding_box;
+    const image = document.getElementById('inputimage')
     const width = Number(image.width);
     const height = Number(image.height);
     return {
@@ -75,12 +74,11 @@ class App extends Component {
          rightCol: width - (clarifaiFace.right_col * width),
          bottomRow: height - (clarifaiFace.bottom_row * height)
     }
-
+ })
   }
 
-  displayFaceBox = (box) => {
-    console.log(box);
-    this.setState({box: box});
+  displayFaceBoxes = (boxes) => {
+    this.setState({boxes: boxes});
   }
 
  onInputChange = (event) => {
@@ -88,28 +86,33 @@ class App extends Component {
   }
   onButtonSubmit = () => {
       this.setState({imageUrl: this.state.input});
-       app.models.predict(Clarifai.FACE_DETECT_MODEL, this.state.input)
-        .then((response)=> { 
-          if(response) {
-          fetch('https://powerful-garden-65991.herokuapp.com/image', {
+       fetch('https://powerful-garden-65991.herokuapp.com/imageUrl', {
+         method: 'post',
+         headers: {'Content-Type': 'application/json'},
+         body: JSON.stringify({
+           input: this.state.input
+         })
+       })
+       .then(response => response.json())
+       .then(response => {
+         if(response) {
+             fetch('https://powerful-garden-65991.herokuapp.com/image', {
             method : 'put',
             headers : {'Content-Type' : 'application/json'},
             body: JSON.stringify({
               id : this.state.user.id
             })
           })
-          .then(response => response.json())
-          .then(count => {
+            .then(response => response.json())
+            .then(count => {
             this.setState(Object.assign(this.state.user, {entries: count}))
           })
           .catch(console.log)
-
-        }
-        this.displayFaceBox(this.calculateFaceLocation(response))
+         }       
+         this.displayFaceBoxes(this.calculateFaceLocations(response))
       })
         .catch(err => 
-          console.log('opps!, there is an error')
-        );
+          console.log('opps!, there is an error', err));
     
   }
  onRouteChange= (route) => {
@@ -122,7 +125,7 @@ class App extends Component {
  }
 
   render() {
-   const  { isSignedIn, imageUrl, box, route } = this.state;
+   const  { isSignedIn, imageUrl, boxes, route } = this.state;
    return (
        <div className='App'>
           <Particles className='particles'
@@ -134,28 +137,34 @@ class App extends Component {
           { route === 'home' 
               ?
             <div>
-
-              <Logo/>
-                <ErrorBoundary>
-                   <Rank name= {this.state.user.name}
+             <Suspense fallback={<div> loading ... </div>}>
+              <Logolazy />
+                <Errorlazy>
+                   <Ranklazy name= {this.state.user.name}
                     entries = {this.state.user.entries}
                     />
-                   <ImageLinkForm onInputChange= {this.onInputChange}
+                   <Imagelazy onInputChange= {this.onInputChange}
                    onButtonSubmit={this.onButtonSubmit}
                    />
-                   <FaceRecognition box = {box}
+                   <Facelazy boxes = {boxes}
                    imageUrl = {imageUrl}
                     />
-                  </ErrorBoundary>
+                  </Errorlazy>
+                </Suspense>  
               </div>
                :
                ( route ==='signin' ? 
+               
                 <SignIn onRouteChange= {this.onRouteChange} 
                  loadUser = {this.loadUser}
-                /> :
-                <Register loadUser = {this.loadUser}
+                
+                />
+                 :
+                <Suspense fallback={<div> loading ... </div>}>
+                 <Registerlazy loadUser = {this.loadUser}
                 onRouteChange= {this.onRouteChange}
                 />
+                </Suspense>
               
           )
          }
