@@ -1,11 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
 .image {
-	font-family: 'Roboto', sans-serif;
+	font-family: 'Roboto', sans-serif !important;
 }
 
 .anime {
-	animation: complete 4s infinite;
+	animation: complete 4s infinite !important;
 }
 @keyframes complete {
 	0% {
