@@ -53,7 +53,7 @@ class App extends Component {
 componentDidMount() {
   const token = window.sessionStorage.getItem('token');
   if(token) {
-    fetch('http://localhost:3000/signin', {
+    fetch('https://powerful-garden-65991.herokuapp.com/signin', {
       method: 'post',
       headers : {
         'Content-Type' : 'application/json',
@@ -63,7 +63,7 @@ componentDidMount() {
     .then(resp => resp.json())
      .then(data => {
       if(data && data.id) {
-        fetch(`http://localhost:3000/profile/${data.id}`, {
+        fetch(`https://powerful-garden-65991.herokuapp.com/profile/${data.id}`, {
           method: 'get',
           headers: {
             'Content-Type' : 'application/json',
