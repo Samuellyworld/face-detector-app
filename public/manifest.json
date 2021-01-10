@@ -1,6 +1,6 @@
 {
-  "name": "face-detection-app",
-  "short_name": "face-detection-app",
+  "name": "Face Detector",
+  "short_name": "Face Detector",
   "start_url": "./index.html",
   "display": "standalone",
    "background_color": "#23756f",
