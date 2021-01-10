@@ -1,3 +1,11 @@
 .button {
 	text-decoration: none;
 }
+
+input {
+	outline: none;
+}
+
+.hover-black:hover {
+	background-color: #000 !important;
+}

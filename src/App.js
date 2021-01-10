@@ -1,14 +1,11 @@
 import React, {Component, Suspense} from 'react';
 import Particles from 'react-particles-js';
-// import Register from './components/Register/Register';
 import SignIn from './components/SignIn/SignIn';
-// import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary'; 
 import Navigation from './components/Navigation/Navigation';
-// import FaceRecognition from './components/FaceRecognition/FaceRecognition';
-// import Logo from './components/Logo/Logo';
-// import Rank from './components/Rank/Rank';
-// import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
+import Modal from './components/Modal/Modal';
+import Profile from './components/Profile/Profile';
 import './App.css';
+
 
 const Registerlazy = React.lazy(() => import('./components/Register/Register'));
 const Errorlazy = React.lazy(() => import('./components/ErrorBoundary/ErrorBoundary'));
@@ -35,13 +32,16 @@ const initialState = {
       boxes: [],
       route : 'signin',
       isSignedIn : false,
+      isProfileOpen: false,
       user: {
           id : '',
         name : '',
         email : '',
         password: '',
         entries: 0,
-        joined : ''
+        joined : '',
+        pet : '',
+        age : ''
       }
     }
 class App extends Component {
@@ -50,6 +50,38 @@ class App extends Component {
     this.state = initialState;
   }
 
+componentDidMount() {
+  const token = window.sessionStorage.getItem('token');
+  if(token) {
+    fetch('http://localhost:3000/signin', {
+      method: 'post',
+      headers : {
+        'Content-Type' : 'application/json',
+        'Authorization' : token
+      }
+    })
+    .then(resp => resp.json())
+     .then(data => {
+      if(data && data.id) {
+        fetch(`http://localhost:3000/profile/${data.id}`, {
+          method: 'get',
+          headers: {
+            'Content-Type' : 'application/json',
+            'Authorization' : token
+          }
+        }).then(resp => resp.json())
+        .then(user => {
+          if(user && user.email) {
+            this.loadUser(user)
+            this.onRouteChange('home')
+          }
+        })
+      }
+    })
+     .catch(err => console.log(err));
+  }
+}
+
  loadUser = (data) => {
      this.setState({ user: {
           id : data.id,
@@ -57,11 +89,14 @@ class App extends Component {
          email : data.email,
          password: data.password,
          entries: data.entries,
-         joined : data.joined
+         joined : data.joined,
+         age: data.age,
+         pet: data.pet
 }
+
  })
 }
- 
+
   calculateFaceLocations = (data) => { 
     return data.outputs[0].data.regions.map(face => {
      const clarifaiFace= face.region_info.bounding_box;
@@ -107,9 +142,11 @@ class App extends Component {
             .then(count => {
             this.setState(Object.assign(this.state.user, {entries: count}))
           })
+
           .catch(console.log)
          }       
-         this.displayFaceBoxes(this.calculateFaceLocations(response))
+          this.displayFaceBoxes(this.calculateFaceLocations(response))
+       
       })
         .catch(err => 
           console.log('opps!, there is an error', err));
@@ -117,23 +154,37 @@ class App extends Component {
   }
  onRouteChange= (route) => {
       if (route === 'signout') {
-        this.setState(initialState);
+       return  this.setState(initialState);
       } else if(route === 'home') {
         this.setState({isSignedIn: true})
       }
   this.setState({route : route})
  }
 
+  toggleModal = () => {
+   this.setState(prevState => ({
+     ...prevState, isProfileOpen: !prevState.isProfileOpen
+   }))
+ }
+
   render() {
-   const  { isSignedIn, imageUrl, boxes, route } = this.state;
+   const  { isSignedIn, imageUrl, boxes, route, isProfileOpen, user } = this.state;
    return (
        <div className='App'>
           <Particles className='particles'
               params={particlesOptions}
            />
           <Navigation onRouteChange={this.onRouteChange}
-           isSignedIn = {isSignedIn}
+           isSignedIn = {isSignedIn} toggleModal={this.toggleModal}
           />
+          {
+            isProfileOpen &&
+             <Modal>
+                 <Profile isProfileOpen ={isProfileOpen}
+                   toggleModal = {this.toggleModal}
+                    loadUser ={this.loadUser} user={user} />
+             </Modal>
+          }
           { route === 'home' 
               ?
             <div>
