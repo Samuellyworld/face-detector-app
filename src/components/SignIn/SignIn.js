@@ -15,6 +15,11 @@ class SignIn extends React.Component {
   onPasswordChange = (event) => {
     this.setState({signInPassword: event.target.value});
   } 
+
+  saveAuthTokenInSession = (token) => {
+    window.sessionStorage.setItem('token', token);
+  }
+
   onSubmitSignInChange = () => {
     fetch('https://powerful-garden-65991.herokuapp.com/signin', 
      {
@@ -24,19 +29,36 @@ class SignIn extends React.Component {
         email: this.state.signInEmail,
         password: this.state.signInPassword
       })
-     }).then(response => response.json())
-    .then(user => {
-      if (user.id) {
-          this.props.loadUser(user);
-         this.props.onRouteChange('home')
-      }
-    })
-    
+     })
+    .then(response => response.json())
+    .then(data => {
+        if (data.userId && data.success === 'true') {
+            this.saveAuthTokenInSession(data.token);
+            fetch(`https://powerful-garden-65991.herokuapp.com/profile/${data.userId}`, {
+            method: 'get',
+            headers: {
+              'Content-Type' : 'application/json',
+              'Authorization' : data.token
+            }
+          })
+           .then(resp => resp.json())
+           .then(user => {
+             if(user && user.email) {
+              this.props.loadUser(user);
+             this.props.onRouteChange('home')
+           }
+        })
+
+    }
+  })
   }
+
+    
+  
   render () {
     const {onRouteChange} = this.props
    return (
-      
+     
        <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-25-l shadow-5 mw6  center">
          <main className="pa4 black-80">
                <div className="measure">
@@ -46,7 +68,7 @@ class SignIn extends React.Component {
                     <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
                     <input required
                     onChange= {this.onEmailChange}
-                     className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" 
+                     className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100 hover-black" 
                      type="email" 
                      name="email-address" 
                       id="email-address"/>
@@ -55,10 +77,10 @@ class SignIn extends React.Component {
                     <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
                     <input
                      onChange={this.onPasswordChange} 
-                    className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
+                    className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100 hover-black"
                      type="password" 
                      name="password"  
-                     id="password"/>
+                     id="signin-password"/>
                    </div>
                  </fieldset>
                  <div className="">
@@ -76,7 +98,7 @@ class SignIn extends React.Component {
               </div>
            </main>
         </article>
-      
+    
     );
   }
 }

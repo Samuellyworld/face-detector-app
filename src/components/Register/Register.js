@@ -1,6 +1,7 @@
 import React from 'react';
 import './Register.css'
 
+
 class Register extends React.Component {
   constructor(props) {
     super(props);
@@ -10,6 +11,9 @@ class Register extends React.Component {
       password: ''
     }
   }
+
+
+
  onNameChange = (event) => {
   this.setState({name: event.target.value});
  }
@@ -35,11 +39,12 @@ class Register extends React.Component {
       this.props.onRouteChange('home');
     }
   })
+
  }
 
   render() {
    return (
-  
+   
      <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-25-l shadow-5 mw6  center">
       <main className="pa4 black-80">
          <div className="measure">
@@ -49,7 +54,7 @@ class Register extends React.Component {
               <label className="db fw6 lh-copy f6" htmlFor="firstname">Name</label>
               <input 
               onChange = {this.onNameChange}
-              className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" 
+              className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100 hover-black" 
               type="firstname"
                name="name" 
                 id="firstname"/>
@@ -58,14 +63,15 @@ class Register extends React.Component {
               <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
               <input required
               onChange ={this.onEmailChange}
-              className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" 
-              type="email" name="email" required
+              className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100 hover-black" 
+              type="email" name="email"
                id="email"/>
              </div>
              <div className="mv3">
               <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
-              <input onChange = {this.onPasswordChange}
-              className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
+              <input
+              onChange = {this.onPasswordChange}
+              className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100 hover-black"
                type="password" name="password" 
                 id="password"/>
              </div>
@@ -80,7 +86,7 @@ class Register extends React.Component {
         </div>
         </main>
      </article>
-
+  
 
      );
   }
