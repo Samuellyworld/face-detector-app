@@ -4,4 +4,6 @@ This is a face detector app, all you need to do is to copy the web image address
 
 make sure you sign in to access the home page in order to input image url to detect faces.
 
-still improving the app
+This web application is still under improvement.
+
+see live at - https://face-detection-a.herokuapp.com/
