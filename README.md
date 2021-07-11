@@ -6,4 +6,4 @@ make sure you sign in to access the home page in order to input image url to det
 
 This web application is still under improvement.
 
-see live at - https://face-detection-a.herokuapp.com/
+see live at - https://face-detection-a.herokuapp.com/.
