@@ -3,7 +3,7 @@
 ## GET STARTED WITH FEW STEPS
 
 - Login with your mail and password.
-- copy a web hosted image link with face/faces to the
+- copy a web hosted image link with people's face/faces to the image input.
 
 make sure you sign in to access the home page in order to input image url to detect faces.
 
